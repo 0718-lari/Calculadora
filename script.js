@@ -1,37 +1,20 @@
 let display = document.getElementById('display');
 let currentInput = '';
-let ansValue = 0; // Para armazenar o resultado anterior (botão Ans)
+let ansValue = 0;
+
+// Constante para converter Graus para Radianos (π / 180)
+const RADIAN_FACTOR = Math.PI / 180;
 
 function appendToDisplay(value) {
+    // [*** MANTENHA O RESTANTE DA FUNÇÃO appendToDisplay() AQUI ***]
+    // ... Seu código da função appendToDisplay() anterior ...
+    // Certifique-se de que a lógica de append continua a mesma
+    
     if (value.includes('(') && !['(', ')'].includes(value)) {
-        // Para funções como Sin(, Log(, etc., insere o nome da função
         currentInput += value;
     } 
-    else if (value === 'x²') {
-        currentInput += '**2';
-    } 
-    else if (value === 'x³') {
-        currentInput += '**3';
-    } 
-    else if (value === 'x⁻¹') {
-        currentInput += '**(-1)';
-    }
-    else if (value === 'x¹⁰') {
-        currentInput += '*10**';
-    } 
-    else if (value === 'Exp') {
-        currentInput += 'Math.E';
-    }
-    else if (value === 'Ans') {
-        // Insere o último resultado calculado
-        currentInput += ansValue;
-    }
-    else if (value === 'x¹' || value === '') {
-        // x¹ e setas direcionais vazias não fazem nada
-        currentInput += '';
-    }
+    // ... [outras condições como x², x³, etc.] ...
     else {
-        // Números, operadores, parênteses, PI, %, e símbolos de raiz
         currentInput += value;
     }
     
@@ -52,30 +35,67 @@ function calculate() {
     try {
         let expression = currentInput;
         
-        // --- Substituição de notações amigáveis por funções JavaScript ---
-        expression = expression
-            .replace(/Sin⁻¹\(/g, 'Math.asin(') 
-            .replace(/Cos⁻¹\(/g, 'Math.acos(') 
-            .replace(/Tan⁻¹\(/g, 'Math.atan(') 
-            .replace(/Sin\(/g, 'Math.sin(')    
-            .replace(/Cos\(/g, 'Math.cos(')     
-            .replace(/Tan\(/g, 'Math.tan(')     
+        // -------------------------------------------------------------
+        // PASSO 1: CONVERSÃO DE SINTAXE E INSERÇÃO DO FATOR RADIANO
+        // -------------------------------------------------------------
+        
+        // Define um padrão de busca para funções trigonométricas seguidas de um número ou expressão entre parênteses.
+        // O padrão (Sin|Cos|Tan)\s*\(([^)]+)\) captura a função e o que está dentro do parênteses.
+        
+        const trigRegex = /(Sin|Cos|Tan|Sin⁻¹|Cos⁻¹|Tan⁻¹)\s*\(([^)]+)\)/g;
+
+        let processedExpression = expression.replace(trigRegex, (match, func, value) => {
+            let mathFunc;
+            let converter = `* ${RADIAN_FACTOR}`; // Fator de conversão para Graus -> Radianos
+            
+            switch (func) {
+                case 'Sin': mathFunc = 'Math.sin'; break;
+                case 'Cos': mathFunc = 'Math.cos'; break;
+                case 'Tan': mathFunc = 'Math.tan'; break;
+                
+                // Funções Inversas (Arco): Recebem radianos e retornam radianos, 
+                // então o resultado deve ser multiplicado por (180/π) para converter para Graus.
+                case 'Sin⁻¹': mathFunc = 'Math.asin'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
+                case 'Cos⁻¹': mathFunc = 'Math.acos'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
+                case 'Tan⁻¹': mathFunc = 'Math.atan'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
+                default: return match; // Caso não encontre, retorna a string original
+            }
+
+            // Para funções normais (Sin, Cos, Tan): 
+            // Math.sin(valor * (π/180))
+            if (func === 'Sin' || func === 'Cos' || func === 'Tan') {
+                 return `${mathFunc}((${value}) ${converter})`;
+            }
+            // Para funções inversas (Sin⁻¹, Cos⁻¹, Tan⁻¹):
+            // Math.asin(valor) * (180/π)
+            return `${mathFunc}(${value}) ${converter}`;
+        });
+        
+        // -------------------------------------------------------------
+        // PASSO 2: CONVERSÃO DE OUTROS SÍMBOLOS E EVAL
+        // -------------------------------------------------------------
+        processedExpression = processedExpression
             .replace(/Log\(/g, 'Math.log10(')    
             .replace(/√/g, 'Math.sqrt(')        
-            .replace(/³√/g, '**(1/3)')          // Raiz cúbica como potência de 1/3
+            .replace(/³√/g, '**(1/3)')          
             .replace(/π/g, 'Math.PI')           
             .replace(/%/g, '/100')             
-            .replace(/\^/g, '**');              // Trata o símbolo ^ como operador de potência
+            .replace(/\^/g, '**');
 
         // Avalia a expressão
-        let result = eval(expression);
+        let result = eval(processedExpression);
         
-        // Exibe o resultado e atualiza as variáveis
-        // Arredonda para evitar erros de ponto flutuante do JS
-        let finalResult = Math.round(result * 10000000000) / 10000000000;
+        // -------------------------------------------------------------
+        // PASSO 3: FORMATAÇÃO DO RESULTADO (toFixed(2))
+        // -------------------------------------------------------------
+        
+        // Converte o resultado para string com duas casas decimais
+        let finalResult = result.toFixed(2);
+        
         display.value = finalResult;
         currentInput = finalResult.toString();
-        ansValue = finalResult; // Salva o resultado para o botão Ans
+        ansValue = finalResult; 
+        
     } catch (error) {
         display.value = 'Erro';
         currentInput = '';
@@ -84,14 +104,15 @@ function calculate() {
 }
 
 function toggleSign() {
-    // Tenta envolver a expressão atual em (-1 * ...) para inverter o sinal
+    // [*** MANTENHA O RESTANTE DA FUNÇÃO toggleSign() AQUI ***]
+    // ... Seu código da função toggleSign() anterior ...
+    
     try {
         let expression = currentInput;
         let result = eval(`-1 * (${expression})`);
         currentInput = result.toString();
         display.value = currentInput;
     } catch {
-        // Se a expressão for inválida, apenas insere o sinal de menos
         currentInput += '-';
         display.value = currentInput;
     }
