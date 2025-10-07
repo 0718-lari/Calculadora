@@ -1,0 +1,172 @@
+/* Variáveis de Cores */
+:root {
+    --bg-light: #F0F0F0;         /* Fundo da tela */
+    --bg-dark: #C4C4C4;          /* Fundo do corpo */
+    --btn-num: #FFFFFF;          /* Botões Numéricos (Branco) */
+    --btn-sci: #EAEAEA;          /* Botões Científicos (Cinza Claro) */
+    --btn-op: #D6D6D6;           /* Botões de Operadores (+,-,*,/) */
+    --btn-equal: #007bff;        /* Azul Moderno para o Igual */
+    --btn-clear: #FF4500;        /* Vermelho/Laranja para Ac/Del */
+    --text-color: #333;
+    --gap-size: 8px; /* Espaçamento ligeiramente maior */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--bg-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Contêiner Principal da Calculadora */
+.calculator-container {
+    width: 340px; /* Largura ajustada */
+    padding: 20px;
+    background-color: var(--bg-dark);
+    border-radius: 10px; 
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Tela (Display) */
+.display {
+    width: 100%;
+    height: 80px; 
+    background-color: var(--bg-light);
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 2.5em;
+    color: var(--text-color);
+    text-align: right;
+    padding: 10px;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Layout dos Botões em Grid */
+.buttons-grid {
+    display: grid;
+    /* Reduzimos para 5 colunas para o teclado principal */
+    grid-template-columns: repeat(5, 1fr); 
+    gap: var(--gap-size);
+}
+
+/* Estilo Base para Todos os Botões */
+.buttons-grid button {
+    height: 48px; /* Altura um pouco maior */
+    font-size: 1.0em;
+    border: none; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* --------------------------------- */
+/* ESTILOS POR CLASSE PARA ORGANIZAÇÃO */
+/* --------------------------------- */
+
+/* Funções Científicas (Linhas 2, 3 e 4) */
+.func-btn {
+    background-color: var(--btn-sci); /* Cor de fundo ligeiramente mais escura */
+    color: #555;
+    font-size: 0.9em;
+}
+
+/* Números */
+.num-btn {
+    background-color: var(--btn-num);
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+/* Operadores (+, -, *, /) e Limpeza/Sinal */
+.operator-btn {
+    background-color: var(--btn-op);
+    color: var(--text-color);
+}
+.operator-btn.delete-btn, .operator-btn.clear-btn {
+    background-color: var(--btn-clear);
+    color: white;
+}
+
+/* Botão de Igual (=) */
+.equals-btn {
+    background-color: var(--btn-equal);
+    color: white;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+/* Controles (OFF/ON) */
+.control-btn.off-on {
+    background-color: var(--btn-op);
+    color: var(--text-color);
+}
+
+/* Pad Direcional (Mantivemos a estrutura, ajustada para a nova altura) */
+.directional-pad {
+    grid-column: span 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+    margin: 0;
+    background: none;
+    border: none; 
+}
+.dir-btn {
+    background-color: var(--btn-sci);
+    height: 24px; /* Metade da altura dos botões normais */
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Efeito de Clique */
+.buttons-grid button:active {
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    filter: brightness(0.9);
+}
+
+/* --------------------------------- */
+/* RESPONSIVIDADE (Celular) */
+/* --------------------------------- */
+@media (max-width: 600px) {
+    body { padding: 0; }
+    .calculator-container {
+        width: 100vw;
+        height: 100vh;
+        padding: 5px;
+        border-radius: 0;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .display {
+        flex-shrink: 0;
+        height: 18vh;
+        font-size: 3em;
+        margin-bottom: 5px;
+        border-radius: 0;
+    }
+    
+    .buttons-grid {
+        flex-grow: 1;
+        gap: 8px; 
+    }
+
+    .buttons-grid button {
+        height: 100%;
+        min-height: 55px; 
+        font-size: 1.1em;
+    }
+}
