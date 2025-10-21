@@ -61,7 +61,7 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 50px; /* Garantindo altura mínima para toque */
+    min-height: 50px;
 }
 
 .btn:hover {
@@ -143,39 +143,39 @@ body {
 /* Media query para tablets (até 768px) */
 @media (max-width: 768px) {
     .calculator {
-        padding: 20px; /* Reduz um pouco o padding */
+        padding: 20px;
     }
 
     .btn {
         padding: 14px 6px;
         font-size: 13px;
-        min-height: 48px; /* Ainda acessível */
+        min-height: 48px;
     }
 
     .display-main {
-        font-size: 22px; /* Fonte menor para caber melhor */
+        font-size: 22px;
     }
 
     .display {
-        padding: 18px; /* Ajuste no display */
+        padding: 18px;
     }
 }
 
 /* Media query para celulares pequenos (até 480px) */
 @media (max-width: 480px) {
     body {
-        padding: 10px; /* Menos padding para maximizar espaço */
+        padding: 10px;
     }
 
     .calculator {
         padding: 15px;
-        border-radius: 15px; /* Bordas um pouco menores */
+        border-radius: 15px;
     }
 
     .btn {
         padding: 12px 6px;
         font-size: 12px;
-        min-height: 44px; /* Padrão mínimo para toque */
+        min-height: 44px;
     }
 
     .display-main {
@@ -188,6 +188,6 @@ body {
     }
 
     .buttons {
-        gap: 6px; /* Menos espaço entre botões para caber mais */
+        gap: 6px;
     }
 }
