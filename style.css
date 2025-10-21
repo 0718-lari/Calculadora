@@ -1,172 +1,193 @@
-/* Variáveis de Cores */
-:root {
-    --bg-light: #F0F0F0;         /* Fundo da tela */
-    --bg-dark: #C4C4C4;          /* Fundo do corpo */
-    --btn-num: #FFFFFF;          /* Botões Numéricos (Branco) */
-    --btn-sci: #EAEAEA;          /* Botões Científicos (Cinza Claro) */
-    --btn-op: #D6D6D6;           /* Botões de Operadores (+,-,*,/) */
-    --btn-equal: #007bff;        /* Azul Moderno para o Igual */
-    --btn-clear: #FF4500;        /* Vermelho/Laranja para Ac/Del */
-    --text-color: #333;
-    --gap-size: 8px; /* Espaçamento ligeiramente maior */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background-color: var(--bg-light);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Contêiner Principal da Calculadora */
-.calculator-container {
-    width: 340px; /* Largura ajustada */
-    padding: 20px;
-    background-color: var(--bg-dark);
-    border-radius: 10px; 
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Tela (Display) */
-.display {
-    width: 100%;
-    height: 80px; 
-    background-color: var(--bg-light);
-    border: none;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    font-size: 2.5em;
-    color: var(--text-color);
-    text-align: right;
-    padding: 10px;
-    box-sizing: border-box;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Layout dos Botões em Grid */
-.buttons-grid {
-    display: grid;
-    /* Reduzimos para 5 colunas para o teclado principal */
-    grid-template-columns: repeat(5, 1fr); 
-    gap: var(--gap-size);
-}
-
-/* Estilo Base para Todos os Botões */
-.buttons-grid button {
-    height: 48px; /* Altura um pouco maior */
-    font-size: 1.0em;
-    border: none; 
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.1s;
-    user-select: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
-/* --------------------------------- */
-/* ESTILOS POR CLASSE PARA ORGANIZAÇÃO */
-/* --------------------------------- */
-
-/* Funções Científicas (Linhas 2, 3 e 4) */
-.func-btn {
-    background-color: var(--btn-sci); /* Cor de fundo ligeiramente mais escura */
-    color: #555;
-    font-size: 0.9em;
+.calculator {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
 }
 
-/* Números */
-.num-btn {
-    background-color: var(--btn-num);
-    color: var(--text-color);
-    font-weight: bold;
+.display {
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: right;
+    font-family: 'Courier New', monospace;
 }
 
-/* Operadores (+, -, *, /) e Limpeza/Sinal */
-.operator-btn {
-    background-color: var(--btn-op);
-    color: var(--text-color);
-}
-.operator-btn.delete-btn, .operator-btn.clear-btn {
-    background-color: var(--btn-clear);
-    color: white;
+.display-main {
+    font-size: 24px;
+    color: #212529;
+    min-height: 30px;
+    word-wrap: break-word;
 }
 
-/* Botão de Igual (=) */
-.equals-btn {
-    background-color: var(--btn-equal);
-    color: white;
-    font-weight: bold;
-    font-size: 1.5em;
+.display-mode {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+    min-height: 15px;
 }
 
-/* Controles (OFF/ON) */
-.control-btn.off-on {
-    background-color: var(--btn-op);
-    color: var(--text-color);
-}
-
-/* Pad Direcional (Mantivemos a estrutura, ajustada para a nova altura) */
-.directional-pad {
-    grid-column: span 3;
+.buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: 1fr 1fr;
-    gap: 0;
-    margin: 0;
-    background: none;
-    border: none; 
-}
-.dir-btn {
-    background-color: var(--btn-sci);
-    height: 24px; /* Metade da altura dos botões normais */
-    border-radius: 0;
-    box-shadow: none;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
 }
 
-/* Efeito de Clique */
-.buttons-grid button:active {
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-    filter: brightness(0.9);
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 15px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 50px; /* Garantindo altura mínima para toque */
 }
 
-/* --------------------------------- */
-/* RESPONSIVIDADE (Celular) */
-/* --------------------------------- */
-@media (max-width: 600px) {
-    body { padding: 0; }
-    .calculator-container {
-        width: 100vw;
-        height: 100vh;
-        padding: 5px;
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-number {
+    background: #e9ecef;
+    color: #212529;
+}
+
+.btn-number:hover {
+    background: #dee2e6;
+}
+
+.btn-operator {
+    background: #007bff;
+    color: white;
+}
+
+.btn-operator:hover {
+    background: #0056b3;
+}
+
+.btn-function {
+    background: #6c757d;
+    color: white;
+    font-size: 12px;
+}
+
+.btn-function:hover {
+    background: #545b62;
+}
+
+.btn-equals {
+    background: #28a745;
+    color: white;
+}
+
+.btn-equals:hover {
+    background: #1e7e34;
+}
+
+.btn-clear {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-clear:hover {
+    background: #c82333;
+}
+
+.btn-wide {
+    grid-column: span 2;
+}
+
+.btn-tall {
+    grid-row: span 2;
+}
+
+.off-state {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.display-off {
+    background: #343a40;
+}
+
+.display-off .display-main {
+    color: transparent;
+}
+
+/* Media query para tablets (até 768px) */
+@media (max-width: 768px) {
+    .calculator {
+        padding: 20px; /* Reduz um pouco o padding */
+    }
+
+    .btn {
+        padding: 14px 6px;
+        font-size: 13px;
+        min-height: 48px; /* Ainda acessível */
+    }
+
+    .display-main {
+        font-size: 22px; /* Fonte menor para caber melhor */
     }
 
     .display {
-        flex-shrink: 0;
-        height: 18vh;
-        font-size: 3em;
-        margin-bottom: 5px;
-        border-radius: 0;
+        padding: 18px; /* Ajuste no display */
     }
-    
-    .buttons-grid {
-        flex-grow: 1;
-        gap: 8px; 
+}
+
+/* Media query para celulares pequenos (até 480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px; /* Menos padding para maximizar espaço */
     }
 
-    .buttons-grid button {
-        height: 100%;
-        min-height: 55px; 
-        font-size: 1.1em;
+    .calculator {
+        padding: 15px;
+        border-radius: 15px; /* Bordas um pouco menores */
+    }
+
+    .btn {
+        padding: 12px 6px;
+        font-size: 12px;
+        min-height: 44px; /* Padrão mínimo para toque */
+    }
+
+    .display-main {
+        font-size: 20px;
+    }
+
+    .display {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .buttons {
+        gap: 6px; /* Menos espaço entre botões para caber mais */
     }
 }

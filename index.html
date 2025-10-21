@@ -1,74 +1,86 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Científica Organizada</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>Calculadora Científica</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="calculator-container">
-        <input type="text" class="display" id="display" value="" readonly>
+    <div class="calculator">
+        <div class="display" id="display">
+            <div class="display-main" id="displayMain">0</div>
+            <div class="display-mode" id="displayMode">DEG</div>
+        </div>
 
-        <div class="buttons-grid">
-            <button class="control-btn off-on">OFF</button>
-            <div class="directional-pad">
-                <button class="dir-btn up" onclick="backspace()">&#9650;</button> 
-                <button class="dir-btn left" onclick="clearDisplay()">&#9664;</button> 
-                <button class="dir-btn right" onclick="appendToDisplay('')">&#9654;</button> 
-                <button class="dir-btn down" onclick="appendToDisplay('')">&#9660;</button> 
-            </div>
-            <button class="control-btn off-on">ON</button>
+        <div class="buttons" id="buttons">
+            <!-- Primeira linha -->
+            <button class="btn btn-clear" onclick="turnOff()">OFF</button>
+            <button class="btn btn-function" id="angleModeBtn" onclick="toggleAngleMode()">MODE</button>
+            <button class="btn btn-function" onclick="scientificFunction('sin')">sin</button>
+            <button class="btn btn-function" onclick="scientificFunction('cos')">cos</button>
+            <button class="btn btn-function" onclick="scientificFunction('tan')">tan</button>
 
-            <button class="func-btn" onclick="appendToDisplay('x²')">x²</button>
-            <button class="func-btn" onclick="appendToDisplay('x³')">x³</button>
-            <button class="func-btn" onclick="appendToDisplay('^')">xʸ</button>
-            <button class="func-btn" onclick="appendToDisplay('Log(')">Log</button>
-            <button class="func-btn" onclick="appendToDisplay('x¹⁰')">10ˣ</button>
+            <!-- Segunda linha -->
+            <button class="btn btn-function" onclick="scientificFunction('x²')">x²</button>
+            <button class="btn btn-function" onclick="scientificFunction('√')">√</button>
+            <button class="btn btn-function" onclick="scientificFunction('x³')">x³</button>
+            <button class="btn btn-function" onclick="setOperation('^')">x^y</button>
+            <button class="btn btn-function" onclick="scientificFunction('10^x')">10^x</button>
 
-            <button class="func-btn" onclick="appendToDisplay('Sin(')">Sin</button>
-            <button class="func-btn" onclick="appendToDisplay('Cos(')">Cos</button>
-            <button class="func-btn" onclick="appendToDisplay('Tan(')">Tan</button>
-            <button class="func-btn" onclick="appendToDisplay('√')">√</button>
-            <button class="func-btn" onclick="appendToDisplay('³√')">&#x221B;</button>
-            
-            <button class="func-btn" onclick="appendToDisplay('Sin⁻¹(')">Sin⁻¹</button>
-            <button class="func-btn" onclick="appendToDisplay('Cos⁻¹(')">Cos⁻¹</button>
-            <button class="func-btn" onclick="appendToDisplay('Tan⁻¹(')">Tan⁻¹</button>
-            <button class="func-btn" onclick="appendToDisplay('π')">&#960;</button>
-            <button class="func-btn" onclick="appendToDisplay('Exp')">Exp</button>
-            
-            <button class="operator-btn clear-btn" onclick="clearDisplay()">Ac</button>
-            <button class="operator-btn delete-btn" onclick="backspace()">Del</button>
-            <button class="func-btn" onclick="appendToDisplay('(')">(</button>
-            <button class="func-btn" onclick="appendToDisplay(')')">)</button>
-            <button class="operator-btn" onclick="appendToDisplay('/')">/</button>
+            <!-- Terceira linha -->
+            <button class="btn btn-function" onclick="scientificFunction('(-)')">(−)</button>
+            <button class="btn btn-function" onclick="scientificFunction('sin⁻¹')">sin⁻¹</button>
+            <button class="btn btn-function" onclick="scientificFunction('cos⁻¹')">cos⁻¹</button>
+            <button class="btn btn-function" onclick="scientificFunction('tan⁻¹')">tan⁻¹</button>
+            <button class="btn btn-function" onclick="scientificFunction('log')">log</button>
 
-            <button class="num-btn" onclick="appendToDisplay('7')">7</button>
-            <button class="num-btn" onclick="appendToDisplay('8')">8</button>
-            <button class="num-btn" onclick="appendToDisplay('9')">9</button>
-            <button class="num-btn" onclick="appendToDisplay('%')">%</button>
-            <button class="operator-btn" onclick="appendToDisplay('*')">*</button>
+            <!-- Quarta linha -->
+            <button class="btn btn-function" onclick="inputParenthesis('(')">(</button>
+            <button class="btn btn-function" onclick="inputParenthesis(')')">)</button>
+            <button class="btn btn-function" onclick="inputPi()">π</button>
+            <button class="btn btn-function" onclick="scientificFunction('ln')">ln</button>
+            <button class="btn btn-function" onclick="scientificFunction('e^x')">e^x</button>
 
-            <button class="num-btn" onclick="appendToDisplay('4')">4</button>
-            <button class="num-btn" onclick="appendToDisplay('5')">5</button>
-            <button class="num-btn" onclick="appendToDisplay('6')">6</button>
-            <button class="func-btn" onclick="toggleSign()">+/-</button>
-            <button class="operator-btn" onclick="appendToDisplay('-')">-</button>
+            <!-- Quinta linha -->
+            <button class="btn btn-clear" onclick="clearAll()">C</button>
+            <button class="btn btn-function" onclick="backspace()">⌫</button>
+            <button class="btn btn-operator" onclick="setOperation('/')">÷</button>
+            <button class="btn btn-operator" onclick="setOperation('*')">×</button>
+            <button class="btn btn-function" onclick="scientificFunction('1/x')">1/x</button>
 
-            <button class="num-btn" onclick="appendToDisplay('1')">1</button>
-            <button class="num-btn" onclick="appendToDisplay('2')">2</button>
-            <button class="num-btn" onclick="appendToDisplay('3')">3</button>
-            <button class="num-btn" onclick="appendToDisplay('.')">.</button>
-            <button class="operator-btn" onclick="appendToDisplay('+')">+</button>
+            <!-- Sexta linha -->
+            <button class="btn btn-number" onclick="inputNumber('7')">7</button>
+            <button class="btn btn-number" onclick="inputNumber('8')">8</button>
+            <button class="btn btn-number" onclick="inputNumber('9')">9</button>
+            <button class="btn btn-operator" onclick="setOperation('-')">−</button>
+            <button class="btn btn-equals btn-tall" onclick="calculate()">=</button>
 
-            <button class="num-btn" onclick="appendToDisplay('0')">0</button>
-            <button class="num-btn" onclick="appendToDisplay('Ans')">Ans</button>
-            <button class="equals-btn" onclick="calculate()" style="grid-column: span 3;">=</button>
+            <!-- Sétima linha -->
+            <button class="btn btn-number" onclick="inputNumber('4')">4</button>
+            <button class="btn btn-number" onclick="inputNumber('5')">5</button>
+            <button class="btn btn-number" onclick="inputNumber('6')">6</button>
+            <button class="btn btn-operator" onclick="setOperation('+')">+</button>
 
+            <!-- Oitava linha -->
+            <button class="btn btn-number" onclick="inputNumber('1')">1</button>
+            <button class="btn btn-number" onclick="inputNumber('2')">2</button>
+            <button class="btn btn-number" onclick="inputNumber('3')">3</button>
+            <button class="btn btn-number btn-wide" onclick="inputNumber('0')">0</button>
+
+            <!-- Nona linha -->
+            <button class="btn btn-number btn-wide" onclick="inputDecimal()">.</button>
+        </div>
+
+        <!-- Botão ON (aparece apenas quando OFF) -->
+        <div class="buttons" id="onButton" style="display: none; margin-top: 10px;">
+            <button class="btn btn-function btn-wide" onclick="turnOn()">ON</button>
         </div>
     </div>
 
-    <script src="script.js"></script> 
+    <script src="script.js"></script>
 </body>
+
 </html>

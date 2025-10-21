@@ -1,119 +1,370 @@
-let display = document.getElementById('display');
-let currentInput = '';
-let ansValue = 0;
+let display = '0';
+let previousValue = null;
+let operation = null;
+let waitingForOperand = false;
+let isOn = true;
+let angleMode = 'deg'; // 'deg', 'rad', ou 'off'
+let parenthesesCount = 0;
 
-// Constante para converter Graus para Radianos (π / 180)
-const RADIAN_FACTOR = Math.PI / 180;
-
-function appendToDisplay(value) {
-    // [*** MANTENHA O RESTANTE DA FUNÇÃO appendToDisplay() AQUI ***]
-    // ... Seu código da função appendToDisplay() anterior ...
-    // Certifique-se de que a lógica de append continua a mesma
+function updateDisplay() {
+    document.getElementById('displayMain').textContent = display;
     
-    if (value.includes('(') && !['(', ')'].includes(value)) {
-        currentInput += value;
-    } 
-    // ... [outras condições como x², x³, etc.] ...
-    else {
-        currentInput += value;
+    // Atualiza o indicador do modo angular
+    const displayMode = document.getElementById('displayMode');
+    if (angleMode === 'off') {
+        displayMode.textContent = '';
+    } else {
+        displayMode.textContent = angleMode.toUpperCase();
     }
-    
-    display.value = currentInput;
 }
 
-function clearDisplay() {
-    currentInput = '';
-    display.value = '';
+function updateModeButton() {
+    const modeBtn = document.getElementById('angleModeBtn');
+    switch (angleMode) {
+        case 'deg':
+            modeBtn.textContent = 'MODE';
+            break;
+        case 'rad':
+            modeBtn.textContent = 'MODE';
+            break;
+        case 'off':
+            modeBtn.textContent = 'MODE';
+            break;
+    }
+}
+
+function inputNumber(num) {
+    if (!isOn) return;
+    
+    if (waitingForOperand) {
+        display = num;
+        waitingForOperand = false;
+    } else {
+        display = display === '0' ? num : display + num;
+    }
+    updateDisplay();
+}
+
+function inputDecimal() {
+    if (!isOn) return;
+    
+    if (waitingForOperand) {
+        display = '0.';
+        waitingForOperand = false;
+    } else if (display.indexOf('.') === -1) {
+        display = display + '.';
+    }
+    updateDisplay();
+}
+
+function inputPi() {
+    if (!isOn) return;
+    display = Math.PI.toString();
+    waitingForOperand = true;
+    updateDisplay();
+}
+
+function inputParenthesis(paren) {
+    if (!isOn) return;
+    
+    if (paren === '(') {
+        parenthesesCount++;
+    } else if (paren === ')' && parenthesesCount > 0) {
+        parenthesesCount--;
+    }
+    
+    if (waitingForOperand || display === '0') {
+        display = paren;
+        waitingForOperand = false;
+    } else {
+        display = display + paren;
+    }
+    updateDisplay();
+}
+
+function clearAll() {
+    if (!isOn) return;
+    display = '0';
+    previousValue = null;
+    operation = null;
+    waitingForOperand = false;
+    parenthesesCount = 0;
+    updateDisplay();
 }
 
 function backspace() {
-    currentInput = currentInput.slice(0, -1);
-    display.value = currentInput;
+    if (!isOn) return;
+    
+    if (display.length > 1) {
+        display = display.slice(0, -1);
+    } else {
+        display = '0';
+    }
+    updateDisplay();
+}
+
+function turnOff() {
+    isOn = false;
+    document.getElementById('display').classList.add('display-off');
+    document.getElementById('buttons').classList.add('off-state');
+    document.getElementById('onButton').style.display = 'block';
+    document.getElementById('displayMain').textContent = '';
+}
+
+function turnOn() {
+    isOn = true;
+    display = '0';
+    previousValue = null;
+    operation = null;
+    waitingForOperand = false;
+    parenthesesCount = 0;
+    
+    document.getElementById('display').classList.remove('display-off');
+    document.getElementById('buttons').classList.remove('off-state');
+    document.getElementById('onButton').style.display = 'none';
+    updateDisplay();
+    updateModeButton();
+}
+
+function toggleAngleMode() {
+    if (!isOn) return;
+    
+    // Cicla entre: deg → rad → off → deg
+    switch (angleMode) {
+        case 'deg':
+            angleMode = 'rad';
+            break;
+        case 'rad':
+            angleMode = 'off';
+            break;
+        case 'off':
+            angleMode = 'deg';
+            break;
+    }
+    
+    updateDisplay();
+    updateModeButton();
+}
+
+function setOperation(nextOperation) {
+    if (!isOn) return;
+    
+    const inputValue = parseFloat(display);
+
+    if (previousValue === null) {
+        previousValue = inputValue;
+    } else if (operation) {
+        const currentValue = previousValue || 0;
+        const result = performCalculation(currentValue, inputValue, operation);
+
+        if (result === null) {
+            display = 'Erro';
+            previousValue = null;
+            operation = null;
+            waitingForOperand = true;
+            updateDisplay();
+            return;
+        }
+
+        // Formata o resultado com 2 casas decimais (ponto)
+        display = result.toFixed(2);
+        previousValue = result;
+    }
+
+    waitingForOperand = true;
+    operation = nextOperation;
+    updateDisplay();
+}
+
+function scientificFunction(func) {
+    if (!isOn) return;
+    
+    const inputValue = parseFloat(display);
+    let result;
+
+    try {
+        switch (func) {
+            case 'sin':
+                if (angleMode === 'deg') {
+                    result = Math.sin(inputValue * Math.PI / 180);
+                } else if (angleMode === 'rad') {
+                    result = Math.sin(inputValue);
+                } else {
+                    // Modo off - assume radianos por padrão
+                    result = Math.sin(inputValue);
+                }
+                break;
+            case 'cos':
+                if (angleMode === 'deg') {
+                    result = Math.cos(inputValue * Math.PI / 180);
+                } else if (angleMode === 'rad') {
+                    result = Math.cos(inputValue);
+                } else {
+                    result = Math.cos(inputValue);
+                }
+                break;
+            case 'tan':
+                if (angleMode === 'deg') {
+                    result = Math.tan(inputValue * Math.PI / 180);
+                } else if (angleMode === 'rad') {
+                    result = Math.tan(inputValue);
+                } else {
+                    result = Math.tan(inputValue);
+                }
+                break;
+            case 'sin⁻¹':
+                if (angleMode === 'deg') {
+                    result = Math.asin(inputValue) * 180 / Math.PI;
+                } else if (angleMode === 'rad') {
+                    result = Math.asin(inputValue);
+                } else {
+                    result = Math.asin(inputValue);
+                }
+                break;
+            case 'cos⁻¹':
+                if (angleMode === 'deg') {
+                    result = Math.acos(inputValue) * 180 / Math.PI;
+                } else if (angleMode === 'rad') {
+                    result = Math.acos(inputValue);
+                } else {
+                    result = Math.acos(inputValue);
+                }
+                break;
+            case 'tan⁻¹':
+                if (angleMode === 'deg') {
+                    result = Math.atan(inputValue) * 180 / Math.PI;
+                } else if (angleMode === 'rad') {
+                    result = Math.atan(inputValue);
+                } else {
+                    result = Math.atan(inputValue);
+                }
+                break;
+            case 'log':
+                result = Math.log10(inputValue);
+                break;
+            case 'ln':
+                result = Math.log(inputValue);
+                break;
+            case '√':
+                result = Math.sqrt(inputValue);
+                break;
+            case 'x²':
+                result = inputValue * inputValue;
+                break;
+            case 'x³':
+                result = inputValue * inputValue * inputValue;
+                break;
+            case '1/x':
+                result = 1 / inputValue;
+                break;
+            case '10^x':
+                result = Math.pow(10, inputValue);
+                break;
+            case 'e^x':
+                result = Math.exp(inputValue);
+                break;
+            case '(-)':
+                result = -inputValue;
+                break;
+            default:
+                return;
+        }
+
+        if (isNaN(result) || !isFinite(result)) {
+            display = 'Erro';
+        } else {
+            // Formata o resultado com 2 casas decimais (ponto)
+            display = result.toFixed(2);
+        }
+        waitingForOperand = true;
+        updateDisplay();
+    } catch (error) {
+        display = 'Erro';
+        waitingForOperand = true;
+        updateDisplay();
+    }
+}
+
+function performCalculation(firstValue, secondValue, operation) {
+    switch (operation) {
+        case '+':
+            return firstValue + secondValue;
+        case '-':
+            return firstValue - secondValue;
+        case '*':
+            return firstValue * secondValue;
+        case '/':
+            if (secondValue === 0) {
+                return null;
+            }
+            return firstValue / secondValue;
+        case '^':
+            return Math.pow(firstValue, secondValue);
+        default:
+            return secondValue;
+    }
 }
 
 function calculate() {
-    try {
-        let expression = currentInput;
-        
-        // -------------------------------------------------------------
-        // PASSO 1: CONVERSÃO DE SINTAXE E INSERÇÃO DO FATOR RADIANO
-        // -------------------------------------------------------------
-        
-        // Define um padrão de busca para funções trigonométricas seguidas de um número ou expressão entre parênteses.
-        // O padrão (Sin|Cos|Tan)\s*\(([^)]+)\) captura a função e o que está dentro do parênteses.
-        
-        const trigRegex = /(Sin|Cos|Tan|Sin⁻¹|Cos⁻¹|Tan⁻¹)\s*\(([^)]+)\)/g;
-
-        let processedExpression = expression.replace(trigRegex, (match, func, value) => {
-            let mathFunc;
-            let converter = `* ${RADIAN_FACTOR}`; // Fator de conversão para Graus -> Radianos
-            
-            switch (func) {
-                case 'Sin': mathFunc = 'Math.sin'; break;
-                case 'Cos': mathFunc = 'Math.cos'; break;
-                case 'Tan': mathFunc = 'Math.tan'; break;
-                
-                // Funções Inversas (Arco): Recebem radianos e retornam radianos, 
-                // então o resultado deve ser multiplicado por (180/π) para converter para Graus.
-                case 'Sin⁻¹': mathFunc = 'Math.asin'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
-                case 'Cos⁻¹': mathFunc = 'Math.acos'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
-                case 'Tan⁻¹': mathFunc = 'Math.atan'; converter = `* (1 / ${RADIAN_FACTOR})`; break;
-                default: return match; // Caso não encontre, retorna a string original
-            }
-
-            // Para funções normais (Sin, Cos, Tan): 
-            // Math.sin(valor * (π/180))
-            if (func === 'Sin' || func === 'Cos' || func === 'Tan') {
-                 return `${mathFunc}((${value}) ${converter})`;
-            }
-            // Para funções inversas (Sin⁻¹, Cos⁻¹, Tan⁻¹):
-            // Math.asin(valor) * (180/π)
-            return `${mathFunc}(${value}) ${converter}`;
-        });
-        
-        // -------------------------------------------------------------
-        // PASSO 2: CONVERSÃO DE OUTROS SÍMBOLOS E EVAL
-        // -------------------------------------------------------------
-        processedExpression = processedExpression
-            .replace(/Log\(/g, 'Math.log10(')    
-            .replace(/√/g, 'Math.sqrt(')        
-            .replace(/³√/g, '**(1/3)')          
-            .replace(/π/g, 'Math.PI')           
-            .replace(/%/g, '/100')             
-            .replace(/\^/g, '**');
-
-        // Avalia a expressão
-        let result = eval(processedExpression);
-        
-        // -------------------------------------------------------------
-        // PASSO 3: FORMATAÇÃO DO RESULTADO (toFixed(2))
-        // -------------------------------------------------------------
-        
-        // Converte o resultado para string com duas casas decimais
-        let finalResult = result.toFixed(2);
-        
-        display.value = finalResult;
-        currentInput = finalResult.toString();
-        ansValue = finalResult; 
-        
-    } catch (error) {
-        display.value = 'Erro';
-        currentInput = '';
-        console.error('Erro de cálculo:', error);
-    }
-}
-
-function toggleSign() {
-    // [*** MANTENHA O RESTANTE DA FUNÇÃO toggleSign() AQUI ***]
-    // ... Seu código da função toggleSign() anterior ...
+    if (!isOn) return;
     
-    try {
-        let expression = currentInput;
-        let result = eval(`-1 * (${expression})`);
-        currentInput = result.toString();
-        display.value = currentInput;
-    } catch {
-        currentInput += '-';
-        display.value = currentInput;
+    const inputValue = parseFloat(display);
+
+    if (previousValue !== null && operation) {
+        const result = performCalculation(previousValue, inputValue, operation);
+        
+        if (result === null) {
+            display = 'Erro';
+            previousValue = null;
+            operation = null;
+            waitingForOperand = true;
+            updateDisplay();
+            return;
+        }
+
+        // Formata o resultado com 2 casas decimais (ponto)
+        display = result.toFixed(2);
+        previousValue = null;
+        operation = null;
+        waitingForOperand = true;
+        updateDisplay();
     }
 }
+
+// Suporte para teclado
+document.addEventListener('keydown', function(event) {
+    if (!isOn) return;
+    
+    const key = event.key;
+    
+    if (key >= '0' && key <= '9') {
+        inputNumber(key);
+    } else if (key === '.') {
+        inputDecimal();
+    } else if (key === '+') {
+        setOperation('+');
+    } else if (key === '-') {
+        setOperation('-');
+    } else if (key === '*') {
+        setOperation('*');
+    } else if (key === '/') {
+        event.preventDefault();
+        setOperation('/');
+    } else if (key === 'Enter' || key === '=') {
+        calculate();
+    } else if (key === 'Escape' || key === 'c' || key === 'C') {
+        clearAll();
+    } else if (key === 'Backspace') {
+        backspace();
+    } else if (key === '(') {
+        inputParenthesis('(');
+    } else if (key === ')') {
+        inputParenthesis(')');
+    } else if (key === 'm' || key === 'M') {
+        toggleAngleMode();
+    }
+});
+
+// Inicializar display
+updateDisplay();
+updateModeButton();
