@@ -8,7 +8,7 @@ let parenthesesCount = 0;
 
 function updateDisplay() {
     document.getElementById('displayMain').textContent = display;
-    
+
     // Atualiza o indicador do modo angular
     const displayMode = document.getElementById('displayMode');
     if (angleMode === 'off') {
@@ -27,7 +27,7 @@ function updateModeButton() {
 
 function inputNumber(num) {
     if (!isOn) return;
-    
+
     if (waitingForOperand) {
         display = num;
         waitingForOperand = false;
@@ -39,7 +39,7 @@ function inputNumber(num) {
 
 function inputDecimal() {
     if (!isOn) return;
-    
+
     if (waitingForOperand) {
         display = '0.';
         waitingForOperand = false;
@@ -58,13 +58,13 @@ function inputPi() {
 
 function inputParenthesis(paren) {
     if (!isOn) return;
-    
+
     if (paren === '(') {
         parenthesesCount++;
     } else if (paren === ')' && parenthesesCount > 0) {
         parenthesesCount--;
     }
-    
+
     if (waitingForOperand || display === '0') {
         display = paren;
         waitingForOperand = false;
@@ -86,7 +86,7 @@ function clearAll() {
 
 function backspace() {
     if (!isOn) return;
-    
+
     if (display.length > 1) {
         display = display.slice(0, -1);
     } else {
@@ -111,7 +111,7 @@ function turnOn() {
     waitingForOperand = false;
     parenthesesCount = 0;
     angleMode = 'deg'; // Reset para DEG quando liga
-    
+
     document.getElementById('display').classList.remove('display-off');
     document.getElementById('buttons').classList.remove('off-state');
     document.getElementById('onButton').style.display = 'none';
@@ -121,7 +121,7 @@ function turnOn() {
 
 function toggleAngleMode() {
     if (!isOn) return;
-    
+
     // Cicla entre: deg → rad → off → chatgpt → deg
     switch (angleMode) {
         case 'deg':
@@ -149,14 +149,14 @@ function toggleAngleMode() {
             angleMode = 'deg';
             break;
     }
-    
+
     updateDisplay();
     updateModeButton();
 }
 
 function setOperation(nextOperation) {
     if (!isOn) return;
-    
+
     const inputValue = parseFloat(display);
 
     if (previousValue === null) {
@@ -185,7 +185,7 @@ function setOperation(nextOperation) {
 
 function scientificFunction(func) {
     if (!isOn) return;
-    
+
     const inputValue = parseFloat(display);
     let result;
 
@@ -300,12 +300,12 @@ function performCalculation(firstValue, secondValue, operation) {
 
 function calculate() {
     if (!isOn) return;
-    
+
     const inputValue = parseFloat(display);
 
     if (previousValue !== null && operation) {
         const result = performCalculation(previousValue, inputValue, operation);
-        
+
         if (result === null) {
             display = 'Erro';
             previousValue = null;
@@ -324,11 +324,11 @@ function calculate() {
 }
 
 // Suporte para teclado
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (!isOn) return;
-    
+
     const key = event.key;
-    
+
     if (key >= '0' && key <= '9') {
         inputNumber(key);
     } else if (key === '.') {
