@@ -3,7 +3,7 @@ let previousValue = null;
 let operation = null;
 let waitingForOperand = false;
 let isOn = true;
-let angleMode = 'deg'; // 'deg', 'rad', ou 'off'
+let angleMode = 'deg'; // 'deg', 'rad', 'off', ou 'chatgpt'
 let parenthesesCount = 0;
 
 function updateDisplay() {
@@ -11,8 +11,8 @@ function updateDisplay() {
     
     // Atualiza o indicador do modo angular
     const displayMode = document.getElementById('displayMode');
-    if (angleMode === 'off') {
-        displayMode.textContent = '';
+    if (angleMode === 'off' || angleMode === 'chatgpt') {
+        displayMode.textContent = angleMode === 'chatgpt' ? 'CHAT' : '';
     } else {
         displayMode.textContent = angleMode.toUpperCase();
     }
@@ -29,6 +29,9 @@ function updateModeButton() {
             break;
         case 'off':
             modeBtn.textContent = 'MODE';
+            break;
+        case 'chatgpt':
+            modeBtn.textContent = 'CHAT';  // Muda para "CHAT" quando ativo
             break;
     }
 }
@@ -129,7 +132,7 @@ function turnOn() {
 function toggleAngleMode() {
     if (!isOn) return;
     
-    // Cicla entre: deg → rad → off → deg
+    // Cicla entre: deg → rad → off → chatgpt → deg
     switch (angleMode) {
         case 'deg':
             angleMode = 'rad';
@@ -138,6 +141,11 @@ function toggleAngleMode() {
             angleMode = 'off';
             break;
         case 'off':
+            angleMode = 'chatgpt';
+            // Abre o site do ChatGPT quando ativa o modo CHAT
+            window.open('https://chat.openai.com', '_blank');
+            break;
+        case 'chatgpt':
             angleMode = 'deg';
             break;
     }
